@@ -86,6 +86,7 @@ Shared mpv arguments (add to every play command):
 $mpvArgs = @('--no-video','--volume=55','--force-window=no',
   '--input-ipc-server=\\.\pipe\mpv-claude',
   '--input-media-keys=no',
+  '--loop-playlist=inf',
   "--script-opts=ytdl_hook-ytdl_path=$mu\yt-dlp.exe",
   "--ytdl-raw-options=cookies=$mu\yt-cookies.txt,js-runtimes=node",
   '--ytdl-format=bestaudio',
@@ -94,11 +95,18 @@ $mpvArgs = @('--no-video','--volume=55','--force-window=no',
 
 (If `yt-cookies.txt` doesn't exist, drop the `cookies=` part of `--ytdl-raw-options`.)
 
-YouTube search (single result — ideal for radio/long mixes; use `ytsearch10:` for a queue):
+YouTube search — **default to a multi-result queue** so music never stops. `ytsearch15:`
+queues ~15 results (a channel/artist query can expand to far more), and with
+`--loop-playlist=inf` (already in `$mpvArgs`) it loops forever:
 
 ```powershell
-Start-Process $mpv -ArgumentList ($mpvArgs + '"ytdl://ytsearch1:SEARCH QUERY"')
+Start-Process $mpv -ArgumentList ($mpvArgs + '"ytdl://ytsearch15:SEARCH QUERY"')
 ```
+
+Avoid `ytsearch1:` for background listening: a single result can resolve to a short clip
+that ends in seconds, and then mpv exits and the user is left in silence. Only use `ytsearch1:`
+for a known long radio/mix stream. **Continuous playback is the expectation** — if music ever
+just stops, relaunch with a queue + loop like above.
 
 Playlist/URL (the user's own playlists work too, thanks to cookies):
 
