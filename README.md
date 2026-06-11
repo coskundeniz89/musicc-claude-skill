@@ -1,9 +1,10 @@
-# 🎵 musicc — music for your Claude Code sessions
+# 🎵 claudoremi — music for your Claude Code sessions
 
-[![CI](https://github.com/coskundeniz89/musicc-claude-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/coskundeniz89/musicc-claude-skill/actions/workflows/ci.yml)
+[![CI](https://github.com/coskundeniz89/claudoremi/actions/workflows/ci.yml/badge.svg)](https://github.com/coskundeniz89/claudoremi/actions/workflows/ci.yml)
 
-A [Claude Code](https://claude.com/claude-code) skill that turns Claude into your terminal DJ.
-Ask in plain language — any language — and keep coding while the music plays:
+**claudoremi** (Claude + *do-re-mi*) is a [Claude Code](https://claude.com/claude-code) skill
+that turns Claude into your terminal DJ. Ask in plain language — any language — and keep
+coding while the music plays:
 
 ```text
 > play some lofi
@@ -17,7 +18,8 @@ Ask in plain language — any language — and keep coding while the music plays
 > stop the music
 ```
 
-No API keys. No subscriptions. No browser tab eating your RAM.
+No API keys. No subscriptions. No browser tab eating your RAM. You're already deep in
+conversation with Claude getting work done — claudoremi just adds the soundtrack.
 
 ## Features
 
@@ -25,9 +27,10 @@ No API keys. No subscriptions. No browser tab eating your RAM.
 - **Your YouTube account** — lists and plays your own playlists (including private ones) by
   borrowing cookies from your already-logged-in browser. Zero API setup.
 - **Local files** — plays your `~/Music` folder or any file/folder you name
-- **Full playback control** — pause, skip, volume, mute, "what's playing", all conversational
-- **Honest feedback** — the skill instructs Claude to verify that audio is *actually* advancing
-  before claiming "now playing", and to read volume/mute state back after every change
+- **State-aware volume** — claudoremi reads the *actual* Windows master + player volume before
+  every change (you turn knobs by hand too), so "set volume to 80" always lands where you expect
+- **Honest feedback** — the skill instructs Claude to verify audio is *actually* advancing
+  before claiming "now playing", never just trust a value it set a moment ago
 - **Self-bootstrapping** — missing mpv or yt-dlp? Claude installs them itself on first use
 
 ## How it works
@@ -47,8 +50,8 @@ you ──(plain language)──▶ Claude Code ──(reads SKILL.md)──▶ 
   between sessions. Claude talks to it over a named pipe using mpv's JSON IPC.
 - **yt-dlp** resolves YouTube audio. A fresh local copy is kept inside the skill folder
   (system-wide copies are often outdated and silently break).
-- **Cookie bridge** (optional): `get-yt-cookies.mjs` pulls your YouTube cookies live from a
-  running Chromium browser (Brave/Chrome/Edge with `--remote-debugging-port=9222`) over the
+- **Cookie bridge** (optional): `get-yt-cookies.mjs` pulls your YouTube cookies live from your
+  *own* running Chromium browser (Brave/Chrome/Edge with `--remote-debugging-port=9222`) over the
   DevTools protocol — that's what unlocks *your* playlists without any Google API project.
 
 ## Requirements
@@ -66,12 +69,12 @@ you ──(plain language)──▶ Claude Code ──(reads SKILL.md)──▶ 
 ### Option 1 — clone + setup script (recommended)
 
 ```powershell
-git clone https://github.com/coskundeniz89/musicc-claude-skill.git
-cd musicc-claude-skill
+git clone https://github.com/coskundeniz89/claudoremi.git
+cd claudoremi
 ./setup.ps1
 ```
 
-The script copies the skill to `~/.claude/skills/musicc`, installs mpv if missing (winget),
+The script copies the skill to `~/.claude/skills/claudoremi`, installs mpv if missing (winget),
 and downloads the latest yt-dlp into the skill folder.
 
 ### Option 2 — Claude Code plugin
@@ -79,13 +82,13 @@ and downloads the latest yt-dlp into the skill folder.
 Inside Claude Code:
 
 ```text
-/plugin marketplace add coskundeniz89/musicc-claude-skill
-/plugin install musicc@musicc-claude-skill
+/plugin marketplace add coskundeniz89/claudoremi
+/plugin install claudoremi@claudoremi
 ```
 
 ### Option 3 — manual
 
-Copy `skills/musicc/` into `~/.claude/skills/musicc/`. Done — Claude bootstraps the
+Copy `skills/claudoremi/` into `~/.claude/skills/claudoremi/`. Done — Claude bootstraps the
 dependencies itself the first time you ask for music.
 
 Then start a **new** Claude Code session and say: `play some music` 🎧
@@ -102,10 +105,22 @@ brave.exe --remote-debugging-port=9222    # or chrome.exe / msedge.exe
 Then just ask: *"list my playlists"* or *"play my Workout playlist"*. Claude pulls your
 YouTube cookies from the running browser automatically and refreshes them when they go stale.
 
-**Privacy:** cookies are written to `yt-cookies.txt` *inside the skill folder on your
-machine*, are listed in `.gitignore`, and are never sent anywhere except youtube.com
-(by yt-dlp/mpv, exactly like your browser does). Plain YouTube search works fine without
-any of this.
+## Security & consent
+
+claudoremi reads cookies — so it's worth being explicit about what it does and doesn't do:
+
+- **Your machine, your browser, your choice.** The cookie bridge only runs against a browser
+  *you* explicitly started with `--remote-debugging-port=9222`. Nothing is read silently or in
+  the background.
+- **Cookies never leave your computer.** They're written to `yt-cookies.txt` *inside the skill
+  folder*, are in `.gitignore`, and are only ever sent to youtube.com (by yt-dlp/mpv — exactly
+  like your browser already does). The skill is instructed never to print or share their contents.
+- **Only your own session.** claudoremi is scoped to the account already logged into your
+  browser. It does not, and will not, touch anyone else's browser or account.
+- **Opt-out by default.** Plain YouTube search and local playback need no cookies at all. The
+  account feature is purely additive.
+- **Note:** yt-dlp is an unofficial client. Personal, low-volume listening is what this is for;
+  don't turn it into bulk scraping.
 
 ## Tests
 
@@ -119,8 +134,9 @@ Tests run on every push via GitHub Actions (`windows-latest`) — no audio devic
 
 ## Roadmap
 
+- **Spotify** — play from a running Spotify app, or via the Web API with a key you set locally
+  on your own machine (no shared secrets). For Premium users this means full library + playlists.
 - macOS/Linux support (Unix socket IPC)
-- Spotify (requires Premium; via `spotify_player`/librespot)
 - Queue management ("add X to the queue"), crossfade… and one day, a proper DJ mode 🎚️
 
 ## License

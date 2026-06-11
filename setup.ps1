@@ -1,19 +1,19 @@
 #Requires -Version 5.1
 <#
-musicc installer - copies the skill into ~/.claude/skills/musicc and sets up
+claudoremi installer - copies the skill into ~/.claude/skills/claudoremi and sets up
 dependencies. Run from the repo root:
 
     ./setup.ps1
 #>
 [CmdletBinding()]
 param(
-    [string]$Target = (Join-Path $HOME '.claude\skills\musicc')
+    [string]$Target = (Join-Path $HOME '.claude\skills\claudoremi')
 )
 
 $ErrorActionPreference = 'Stop'
-$src = Join-Path $PSScriptRoot 'skills\musicc'
+$src = Join-Path $PSScriptRoot 'skills\claudoremi'
 
-Write-Host "Installing musicc skill -> $Target"
+Write-Host "Installing claudoremi skill -> $Target"
 New-Item -ItemType Directory -Force -Path $Target | Out-Null
 Copy-Item (Join-Path $src '*') $Target -Recurse -Force
 

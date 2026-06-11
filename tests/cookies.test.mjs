@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { filterCookies, toNetscapeLine, toNetscapeFile } from '../skills/musicc/get-yt-cookies.mjs';
+import { filterCookies, toNetscapeLine, toNetscapeFile } from '../skills/claudoremi/get-yt-cookies.mjs';
 
 const cookie = (over = {}) => ({
   domain: '.youtube.com',

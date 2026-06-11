@@ -1,9 +1,9 @@
 ---
-name: musicc
+name: claudoremi
 description: Play and control music in the terminal while you work (mpv + yt-dlp; YouTube search, the user's own YouTube playlists, or local files). Use for requests like "play some music", "play X", "play my playlist", "list my playlists", "pause", "resume", "skip", "next song", "volume up/down", "set volume to 80", "mute", "what's playing", "stop the music".
 ---
 
-# musicc — terminal music for Claude Code
+# claudoremi — terminal music for Claude Code
 
 Music plays in a **detached `mpv` process** in the background and is controlled over a
 JSON IPC named pipe (`\\.\pipe\mpv-claude`). The music keeps playing after every tool

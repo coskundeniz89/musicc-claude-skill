@@ -1,7 +1,7 @@
 # Tests for mpv-ipc.ps1 - run without mpv by emulating the IPC pipe server.
 # Usage: pwsh -File tests/mpv-ipc.test.ps1
 $ErrorActionPreference = 'Stop'
-$ipcScript = Join-Path $PSScriptRoot '..\skills\musicc\mpv-ipc.ps1'
+$ipcScript = Join-Path $PSScriptRoot '..\skills\claudoremi\mpv-ipc.ps1'
 $script:failures = 0
 
 function Assert([bool]$Condition, [string]$Message) {
@@ -30,7 +30,7 @@ function Start-PipeServer([string]$Name, [string[]]$Reply) {
 Write-Host 'mpv-ipc.ps1 tests'
 
 # --- fire-and-forget: command reaches the pipe verbatim ---
-$pipeName = "musicc-test-$([guid]::NewGuid().ToString('N').Substring(0, 8))"
+$pipeName = "claudoremi-test-$([guid]::NewGuid().ToString('N').Substring(0, 8))"
 $job = Start-PipeServer -Name $pipeName -Reply @()
 Start-Sleep -Seconds 2
 $json = '{"command":["cycle","pause"]}'
@@ -42,7 +42,7 @@ Assert ($received -eq $json) 'server received the exact JSON line'
 Assert ([string]::IsNullOrEmpty($out)) 'no output without -Read'
 
 # --- -Read: returns the reply line, skipping unsolicited event lines ---
-$pipeName = "musicc-test-$([guid]::NewGuid().ToString('N').Substring(0, 8))"
+$pipeName = "claudoremi-test-$([guid]::NewGuid().ToString('N').Substring(0, 8))"
 $job = Start-PipeServer -Name $pipeName -Reply @(
     '{"event":"property-change","name":"volume"}',
     '{"data":55.0,"request_id":7,"error":"success"}'
@@ -55,7 +55,7 @@ Assert ($out -match '"request_id":7') '-Read returns the matching reply'
 Assert ($out -notmatch 'property-change') 'event lines are skipped'
 
 # --- no pipe: clean failure ---
-$out = & $ipcScript -Json '{"command":["quit"]}' -PipeName 'musicc-test-does-not-exist' -TimeoutMs 500
+$out = & $ipcScript -Json '{"command":["quit"]}' -PipeName 'claudoremi-test-does-not-exist' -TimeoutMs 500
 Assert ($LASTEXITCODE -eq 1) 'missing pipe exits 1'
 Assert ($out -match 'not running') 'missing pipe prints a clear message'
 

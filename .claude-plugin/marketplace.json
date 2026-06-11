@@ -1,12 +1,12 @@
 {
-  "name": "musicc-claude-skill",
+  "name": "claudoremi",
   "owner": {
     "name": "Coşkun Deniz",
     "url": "https://github.com/coskundeniz89"
   },
   "plugins": [
     {
-      "name": "musicc",
+      "name": "claudoremi",
       "source": "./",
       "description": "Turn Claude Code into your terminal DJ - play YouTube, your own playlists, and local files while you work. No API keys."
     }

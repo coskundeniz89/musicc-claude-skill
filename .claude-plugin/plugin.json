@@ -1,13 +1,13 @@
 {
-  "name": "musicc",
+  "name": "claudoremi",
   "description": "Turn Claude Code into your terminal DJ - play YouTube, your own playlists, and local files while you work. No API keys.",
   "version": "0.1.0",
   "author": {
     "name": "Coşkun Deniz",
     "url": "https://github.com/coskundeniz89"
   },
-  "homepage": "https://github.com/coskundeniz89/musicc-claude-skill",
-  "repository": "https://github.com/coskundeniz89/musicc-claude-skill",
+  "homepage": "https://github.com/coskundeniz89/claudoremi",
+  "repository": "https://github.com/coskundeniz89/claudoremi",
   "license": "MIT",
   "keywords": ["music", "mpv", "youtube", "yt-dlp", "terminal", "windows"]
 }
