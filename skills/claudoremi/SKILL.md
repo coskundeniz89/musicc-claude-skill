@@ -201,27 +201,42 @@ Stop-Process -Name mpv -ErrorAction SilentlyContinue -Confirm:$false   # if the 
 ## Spotify (no API key, no Premium needed)
 
 For users who'd rather listen on Spotify. `spotify.ps1` reads "now playing" from Spotify's
-window title and drives playback with global media keys — it controls the Spotify desktop app
-the user already has open. No Web API, no client ID, no Premium requirement.
+window title and drives playback with global media keys — it **remote-controls the Spotify
+desktop app**, it does not host audio itself. No Web API, no client ID, no Premium requirement.
 
 ```powershell
 & "$mu\spotify.ps1"                       # status / now playing
 & "$mu\spotify.ps1" -Control playpause    # playpause | next | previous | stop
-& "$mu\spotify.ps1" -Open "miles davis"   # open Spotify to a search (then press play / -Control playpause)
-& "$mu\spotify.ps1" -Uri spotify:track:.. # launch a specific track/playlist URI or link
+& "$mu\spotify.ps1" -Open "miles davis"   # open Spotify to a search results page
+& "$mu\spotify.ps1" -Uri spotify:track:.. # launch (and play) a specific track/playlist URI or link
 ```
 
-Routing:
-- **"play X on Spotify"** → `-Open "X"`, then after ~2 s `-Control playpause` to start it; read
-  status back and report the actual title.
-- **"pause / resume / next / previous on Spotify"** → `-Control playpause|next|previous`.
-- **"what's playing on Spotify"** → run with no args.
-- If `spotify.ps1` reports **not installed**, tell the user and offer the YouTube engine instead.
-- Spotify search-by-name that resolves to an exact track needs the user to start it; the Web API
-  path (user's own local client ID) is a roadmap item, not implemented yet.
+**Two hard truths, verified live — state these honestly, don't over-claim:**
 
-Note: our mpv launches with `--input-media-keys=no` so it never steals the hardware media keys
-that drive Spotify. The two engines coexist — but tell the user if both are playing at once.
+1. **Closing Spotify stops the music.** We control the user's app; it isn't our player. If the
+   user closes Spotify, playback ends — that's by design, not a bug. For background music that
+   survives with no app open, that's the **YouTube/mpv engine**, not Spotify.
+2. **`-Control playpause` only resumes whatever track is already loaded** — it does NOT play a
+   named search result. And `-Open "X"` opens the *search page* but does not auto-play track X.
+   So "play <name> on Spotify" cannot reliably start that exact track without its URI.
+
+Routing:
+- **"pause / resume / next / previous on Spotify"** → `-Control ...` (fully reliable; verify by
+  reading status back).
+- **"what's playing on Spotify"** → run with no args.
+- **"play a specific Spotify link/URI"** → `-Uri spotify:...` (this *does* start that track).
+- **"play <name> on Spotify"** → be honest: run `-Open "<name>"` to bring up results and ask the
+  user to click a track, OR offer to play it on YouTube instead (which can start a named track
+  directly). Don't claim you started "<name>" on Spotify when you only opened a search.
+- If `spotify.ps1` reports **not installed**, say so and offer the YouTube engine.
+- Note `-Open`/`-Uri` will **relaunch Spotify if it was closed** — which can leave two sources
+  playing at once (see below).
+
+**One engine at a time (default).** mpv (YouTube/local) and Spotify are independent audio
+sources and will happily play *over each other*. Before starting one, check whether the other is
+already playing (`status.ps1` for mpv, `spotify.ps1` for Spotify) and pause/stop it first, unless
+the user explicitly wants both. Our mpv launches with `--input-media-keys=no` so it never steals
+the hardware media keys that drive Spotify.
 
 ## Notes
 
